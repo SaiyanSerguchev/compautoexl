@@ -44,7 +44,7 @@ for partition in partitions:
         # this can be catched due to the disk that
         # isn't ready
         continue
-    worksheet.write("A7",f"  Total Size of disk: {get_size(partition_usage.total)}")
-    worksheet.write("A8",f"  Used: {get_size(partition_usage.used)}")
+    worksheet.write("A7",f"Total Size of disk: {get_size(partition_usage.total)}")
+    worksheet.write("A8",f"Used: {get_size(partition_usage.used)}")
 
 workbook.close()
