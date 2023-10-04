@@ -1,6 +1,11 @@
 import psutil
 import platform
 import GPUtil
+import xlsxwriter
+
+workbook = xlsxwriter.Workbook("Audit.xlsx")
+worksheet = workbook.add_worksheet()
+worksheet.set_column("A:A", 30)
 
 def get_size(bytes, suffix="B"):
     """
@@ -16,18 +21,20 @@ def get_size(bytes, suffix="B"):
         bytes /= factor
 
 uname = platform.uname()
-print(f"Node Name: {uname.node}")
-print(f"Processor: {uname.machine}")
+worksheet.write("A1", f"Node Name: {uname.node}")
+worksheet.write("A2", f"Processor: {uname.machine}")
 gpus = GPUtil.getGPUs()
 list_gpus = []
 for gpu in gpus:
-    print(f"GPU: {gpu.name}")
+    worksheet.write("A3", f"GPU: {gpu.name}")
 
 svmem = psutil.virtual_memory()
-print(f"Memory: {get_size(svmem.total)}")
+worksheet.write("A4", f"Memory: {get_size(svmem.total)}")
 
-print("Physical cores:", psutil.cpu_count(logical=False))
-print("Total cores:", psutil.cpu_count(logical=True))
+print()
+worksheet.write("A5", f"Physical cores:{psutil.cpu_count(logical=False)}")
+print()
+worksheet.write("A6", f"Total cores:{psutil.cpu_count(logical=True)}")
 
 partitions = psutil.disk_partitions()
 for partition in partitions:
@@ -37,6 +44,7 @@ for partition in partitions:
         # this can be catched due to the disk that
         # isn't ready
         continue
-    print(f"  Total Size of disk: {get_size(partition_usage.total)}")
-    print(f"  Used: {get_size(partition_usage.used)}")
+    worksheet.write("A7",f"  Total Size of disk: {get_size(partition_usage.total)}")
+    worksheet.write("A8",f"  Used: {get_size(partition_usage.used)}")
 
+workbook.close()
